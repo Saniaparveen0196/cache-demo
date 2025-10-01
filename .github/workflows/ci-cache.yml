@@ -1,0 +1,41 @@
+name: CI with Dependency Cache
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python (example)
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # Step 3: Cache dependencies
+      - name: Cache pip packages
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: cache-f8110a4
+          restore-keys: |
+            cache-f8110a4
+
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      # Step 5: Prime cache (optional check)
+      - name: Prime cache
+        run: echo "Cache hit? ${{ steps.cache-deps.outputs.cache-hit }}"
